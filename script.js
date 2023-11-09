@@ -49,12 +49,16 @@ function initializeForm() {
       Object.keys(components).forEach((componentType) => {
         const selectElement = document.getElementById(componentType);
         if (selectElement) {
-          totalPrice += parseInt(selectElement.value, 10);
+          totalPrice += parseInt(selectElement.value, 10) || 0;
         }
       });
 
       document.getElementById("totalPrice").textContent = `€${totalPrice}`;
       console.log("Order submitted with total price: ", totalPrice);
+
+      const submitButton = document.getElementById('submitButton');
+      submitButton.textContent = "Order submitted!";
+      submitButton.disabled = true;
     });
 
   Object.keys(components).forEach((componentType) => {
