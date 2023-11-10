@@ -32,11 +32,37 @@ function createSelectOptions(items) {
   return options;
 }
 
+function updateTotal() {
+  let totalPrice = 0;
+  Object.keys(components).forEach((componentType) => {
+    const selectElement = document.getElementById(componentType);
+    if (selectElement) {
+      totalPrice += parseInt(selectElement.value, 10) || 0;
+    }
+  });
+  document.getElementById("totalPrice").textContent = `€${totalPrice}`;
+}
+
+function resetForm() {
+  Object.keys(components).forEach((componentType) => {
+    const selectElement = document.getElementById(componentType);
+    if (selectElement) {
+      selectElement.selectedIndex = 0;
+    }
+  });
+
+  document.getElementById("totalPrice").textContent = "€0";
+  document.getElementById("submitButton").textContent = "Submit Order";
+  document.getElementById("submitButton").disabled = false;
+  document.getElementById("newOrderButton").classList.add("hiddenButton");
+}
+
 function initializeForm() {
   Object.keys(components).forEach((componentType) => {
     const selectElement = document.getElementById(componentType);
     if (selectElement) {
       selectElement.innerHTML = createSelectOptions(components[componentType]);
+      selectElement.addEventListener("change", updateTotal);
     }
   });
 
@@ -44,44 +70,16 @@ function initializeForm() {
     .getElementById("orderForm")
     .addEventListener("submit", function (event) {
       event.preventDefault();
+      updateTotal();
 
-      let totalPrice = 0;
-      Object.keys(components).forEach((componentType) => {
-        const selectElement = document.getElementById(componentType);
-        if (selectElement) {
-          totalPrice += parseInt(selectElement.value, 10) || 0;
-        }
-      });
-
-      document.getElementById("totalPrice").textContent = `€${totalPrice}`;
-      console.log("Order submitted with total price: ", totalPrice);
-
-      const submitButton = document.getElementById('submitButton');
-      submitButton.textContent = "Order submitted!";
-      submitButton.disabled = true;
+      document.getElementById("submitButton").textContent = "Order Submitted!";
+      document.getElementById("submitButton").disabled = true;
+      document.getElementById("newOrderButton").classList.remove("hiddenButton");
     });
 
-  Object.keys(components).forEach((componentType) => {
-    const selectElement = document.getElementById(componentType);
-    if (selectElement) {
-      selectElement.addEventListener("change", updateTotal);
-    }
-  });
-}
-
-function updateTotal() {
-  let totalPrice = 0;
-  Object.keys(components).forEach((componentType) => {
-    const selectElement = document.getElementById(componentType);
-    if (selectElement) {
-      const selectedValue = selectElement.value;
-      if (selectedValue) {
-        totalPrice += parseInt(selectedValue, 10);
-      }
-    }
-  });
-
-  document.getElementById("totalPrice").textContent = `€${totalPrice}`;
+  document
+    .getElementById("newOrderButton")
+    .addEventListener("click", resetForm);
 }
 
 document.addEventListener("DOMContentLoaded", initializeForm);
